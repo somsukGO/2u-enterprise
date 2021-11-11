@@ -6,7 +6,6 @@ const multer = require('multer');
 
 const upload = multer({});
 
-router.get('/findByEmployee', authenticateAccessToken, refuelController.findByEmployee);
 router.get('/findAll', authenticateAccessToken, refuelController.findAll);
 router.get('/:id', authenticateAccessToken, refuelController.findById);
 router.delete('/delete', authenticateAccessToken, refuelController.remove);

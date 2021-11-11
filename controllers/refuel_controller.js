@@ -6,24 +6,6 @@ const fs = require('fs');
 const path = require('../utils/app_constant').filePath;
 const ErrorModel = require('../middlewares/error_model');
 
-const findByEmployee = asyncHandler(async (req, res, next) => {
-  if (!req.query.startDate) throw new ErrorModel('Start date not exists');
-  if (!req.query.endDate) throw new ErrorModel('End date not exists');
-
-  const startDate = req.query.startDate + 'T00:00:00';
-  const endDate = req.query.endDate + 'T23:59:59';
-
-  const options = {
-    page: req.query.page || 1,
-    limit: req.query.limit || 20,
-    sort: { createdAt: -1 },
-    populate: ['employee', 'vehicle'],
-  };
-
-  const refuels = await Refuels.paginate({ createdAt: { $gte: startDate, $lt: endDate }, employee: req.query.employee }, options);
-  return res.status(200).json(refuels);
-});
-
 const findAll = asyncHandler(async (req, res, next) => {
   const options = {
     page: req.query.page || 1,
@@ -39,6 +21,11 @@ const findAll = asyncHandler(async (req, res, next) => {
     const endDate = req.query.endDate + 'T23:59:59';
 
     filter.createdAt = { $gte: startDate, $lt: endDate };
+  }
+
+  const employeeId = req.query.employee;
+  if (employeeId) {
+    filter.employee = employeeId;
   }
 
   const refuels = await Refuels.paginate(filter, options);
@@ -182,4 +169,4 @@ const networkImage = asyncHandler(async (req, res, next) => {
   file.pipe(res);
 });
 
-module.exports = { findAll, findByEmployee, add, networkImage, update, remove, findById };
+module.exports = { findAll, add, networkImage, update, remove, findById };
